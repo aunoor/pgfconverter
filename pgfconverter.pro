@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core xml
-
-QT       -= gui
+QT       += core gui xml
 
 TARGET = pgfconverter
 CONFIG   += console
@@ -14,5 +12,18 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+SOURCES += src/main.cpp \
+    src/mainwindow.cpp
 
-SOURCES += main.cpp
+HEADERS += \
+    src/mainwindow.h
+
+FORMS += \
+    ui/mainwindow.ui
+
+INCLUDEPATH += src
+
+UI_DIR = tmp/.ui
+MOC_DIR = tmp/.moc
+OBJECTS_DIR = tmp/.obj
+RCC_DIR = tmp/.rcc
