@@ -40,27 +40,23 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_treeWidget_customContextMenuRequested(QPoint pos);
+    void on_action_del_from_list_triggered();
+    void on_treeWidget_itemDoubleClicked(QTreeWidgetItem* item, int column);
+    void on_action_open_file_triggered();
+    void on_action_append_from_file_triggered();
     void on_action_exit_triggered();
-
-    void on_action_open_gpx_triggered();
-
-    void on_action_import_fav_triggered();
-
     void on_action_export_fav_triggered();
-
     void on_action_save_gpx_triggered();
-
     void on_action_check_all_triggered();
-
     void on_action_uncheck_all_triggered();
 
 private:
     Ui::MainWindow *ui;
-    FavPointsList favList;
-    QMenu treeDropMenu;
+    QMenu listMenu;
     bool loadFavRecords(QString fileName, FavPointsList &list);
     void trRawPointToPoint(favRecord_t &favRawPoint, FavPointsList &list);
-    void showPointList(FavPointsList &list);
+    void showPointList(FavPointsList &list, bool append);
     bool loadGpx(QString fileName, FavPointsList &list);
     void chCheckItems(bool checked);
     bool storeInGpx(QString &fileName);

@@ -1,6 +1,7 @@
 #include <QtXml>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "editpointdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -10,10 +11,23 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->treeWidget->clear();
     this->ui->treeWidget->setHeaderLabels(QStringList() << tr("Наименование") << tr("Описание") << tr("Координаты"));
 
+    this->ui->treeWidget->header()->resizeSection(0,200);
+    this->ui->treeWidget->header()->resizeSection(1,200);
+/*
     this->ui->treeWidget->addAction(this->ui->action_check_all);
     this->ui->treeWidget->addAction(this->ui->action_uncheck_all);
-    this->ui->treeWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+    this->ui->treeWidget->addAction(this->ui->action_del_from_list);
+*/
+    listMenu.addAction(this->ui->action_check_all);
+    listMenu.addAction(this->ui->action_uncheck_all);
+    listMenu.addAction(this->ui->action_del_from_list);
+    listMenu.insertSeparator(this->ui->action_del_from_list);
+
+    //this->ui->treeWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+    this->ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setWindowTitle(tr("Путевые точки"));
+
+
 }
 
 MainWindow::~MainWindow()
@@ -24,22 +38,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_action_exit_triggered()
 {
     this->close();
-}
-
-void MainWindow::on_action_open_gpx_triggered()
-{
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Импорт gpx waypoints"),".","*.gpx");
-    if (fileName.isEmpty()) return;
-    if (!loadGpx(fileName, favList)) return;
-    showPointList(favList);
-}
-
-void MainWindow::on_action_import_fav_triggered()
-{
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Импорт favorites.dat"),".","favorites.dat; *.dat");
-    if (fileName.isEmpty()) return;
-    if (!loadFavRecords(fileName, favList)) return;
-    showPointList(favList);
 }
 
 void MainWindow::on_action_export_fav_triggered()
@@ -109,8 +107,8 @@ bool MainWindow::loadFavRecords(QString fileName, FavPointsList &list)
     return true;
 }
 
-void MainWindow::showPointList(FavPointsList &list) {
-    this->ui->treeWidget->clear();
+void MainWindow::showPointList(FavPointsList &list, bool append) {
+    if (!append) this->ui->treeWidget->clear();
     for (int i=0;i<list.size();i++) {
         QStringList sList;
         sList << list.at(i).name;
@@ -256,4 +254,55 @@ bool MainWindow::storeInFavDat(QString &fileName){
     }//for
     file.close();
     return true;
+}
+
+void MainWindow::on_action_append_from_file_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Добавить точки в список"),".",tr("Файлы с путевыми точками (*.gpx; favorites.dat)"));
+    if (fileName.isEmpty()) return;
+    FavPointsList favList;
+    if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
+    else {if (!loadFavRecords(fileName, favList)) return; }
+    showPointList(favList, true);
+}
+
+void MainWindow::on_action_open_file_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Открыть список точек"),".",tr("Файлы с путевыми точками (*.gpx; favorites.dat)"));
+    if (fileName.isEmpty()) return;
+    FavPointsList favList;
+    if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
+    else {if (!loadFavRecords(fileName, favList)) return; }
+    showPointList(favList, false);
+}
+
+void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem* item, int column)
+{
+    EditPointDialog ed;
+    QString name, desc, coords;
+    name = item->text(0);
+    desc = item->text(1);
+    coords = item->text(2);
+    int res=ed.exec(name, desc, coords);
+    if (res==QDialog::Rejected) return;
+    favPoints_t point = item->data(0,Qt::UserRole).value<favPoints_t>();
+    point.desc = desc;
+    point.name = name;
+    item->setData(0,Qt::UserRole,qVariantFromValue(point));
+    item->setText(0,name);
+    item->setText(1,desc);
+}
+
+void MainWindow::on_action_del_from_list_triggered()
+{
+    if (!ui->treeWidget->currentItem()) return;
+    ui->treeWidget->model()->removeRow(ui->treeWidget->currentIndex().row());
+}
+
+void MainWindow::on_treeWidget_customContextMenuRequested(QPoint pos)
+{
+    ui->action_del_from_list->setEnabled(ui->treeWidget->itemAt(pos));
+    QPoint locPos = mapToGlobal(pos);
+    locPos.setY(locPos.y()+listMenu.sizeHint().height()-20);
+    listMenu.popup(locPos,ui->action_check_all);
 }

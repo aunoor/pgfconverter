@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
+    <width>554</width>
     <height>472</height>
    </rect>
   </property>
@@ -27,6 +27,9 @@
        <bool>true</bool>
       </property>
       <property name="headerHidden">
+       <bool>false</bool>
+      </property>
+      <property name="expandsOnDoubleClick">
        <bool>false</bool>
       </property>
       <property name="columnCount">
@@ -71,22 +74,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_open_gpx"/>
+   <addaction name="action_open_file"/>
+   <addaction name="action_append_from_file"/>
    <addaction name="action_save_gpx"/>
-   <addaction name="action_import_fav"/>
    <addaction name="action_export_fav"/>
    <addaction name="action_exit"/>
   </widget>
-  <action name="action_open_gpx">
-   <property name="text">
-    <string>Открыть gpx</string>
-   </property>
-  </action>
-  <action name="action_import_fav">
-   <property name="text">
-    <string>Извлечь из ПроГород</string>
-   </property>
-  </action>
   <action name="action_export_fav">
    <property name="text">
     <string>Сохранить в ПроГород</string>
@@ -110,6 +103,24 @@
   <action name="action_uncheck_all">
    <property name="text">
     <string>Сбросить выбор</string>
+   </property>
+  </action>
+  <action name="action_append_from_file">
+   <property name="text">
+    <string>Добавить из файла</string>
+   </property>
+   <property name="toolTip">
+    <string>Добавить из файла</string>
+   </property>
+  </action>
+  <action name="action_open_file">
+   <property name="text">
+    <string>Открыть файл</string>
+   </property>
+  </action>
+  <action name="action_del_from_list">
+   <property name="text">
+    <string>Удалить из списка</string>
    </property>
   </action>
  </widget>
