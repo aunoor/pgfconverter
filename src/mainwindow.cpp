@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     listMenu.insertSeparator(this->ui->action_del_from_list);
 
     this->ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    this->setWindowTitle(tr("Путевые точки"));
+    this->setWindowTitle(tr("Конвертер избранных точек"));
 
 
 }
@@ -41,7 +41,7 @@ void MainWindow::on_action_export_fav_triggered()
         QMessageBox::critical(this,QObject::tr("Ошибка"), tr("Не выбрано ни одной точки для сохранения."));
         return;
     }
-    QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт favorites.dat"),".","favorites.dat; *.dat");
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт favorites.dat"),".",tr("Файл избранных точек ПроГород (favorites.dat *.dat)"));
     if (fileName.isEmpty()) return;
     if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".dat");
     storeInFavDat(fileName);
@@ -53,7 +53,7 @@ void MainWindow::on_action_save_gpx_triggered()
         QMessageBox::critical(this,QObject::tr("Ошибка"), tr("Не выбрано ни одной точки для сохранения."));
         return;
     }
-    QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт gpx waypoints"),".","*.gpx");
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт gpx waypoints"),".",tr("Файл точек GPX (*.gpx)"));
     if (fileName.isEmpty()) return;
     if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".gpx");
     storeInGpx(fileName);
@@ -255,7 +255,7 @@ bool MainWindow::storeInFavDat(QString &fileName){
 
 void MainWindow::on_action_append_from_file_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Добавить точки в список"),".",tr("Файлы с путевыми точками (*.gpx; favorites.dat; *.dat)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Добавить точки в список"),".",tr("Файлы с путевыми точками (*.gpx favorites.dat *.dat)"));
     if (fileName.isEmpty()) return;
     FavPointsList favList;
     if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
@@ -265,7 +265,7 @@ void MainWindow::on_action_append_from_file_triggered()
 
 void MainWindow::on_action_open_file_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Открыть список точек"),".",tr("Файлы с путевыми точками (*.gpx; favorites.dat; *.dat)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Открыть список точек"),".",tr("Файлы с путевыми точками (*.gpx favorites.dat *.dat)"));
     if (fileName.isEmpty()) return;
     FavPointsList favList;
     if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
