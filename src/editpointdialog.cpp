@@ -36,4 +36,5 @@ int EditPointDialog::exec(QString &name, QString &desc, QString coords)
     if (res!=QDialog::Accepted) return res;
     name = this->m_ui->nameLineEdit->text();
     desc = this->m_ui->descLineEdit->text();
+    return res;
 }
