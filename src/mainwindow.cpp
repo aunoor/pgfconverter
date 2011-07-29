@@ -3,13 +3,23 @@
 #include "ui_mainwindow.h"
 #include "editpointdialog.h"
 
+#define VERSION "v1.0.3"
+
+/*
+ Координаты храняться в little endian uint32.
+
+ ПроГород поддерживает 5 значимых знаков после запятой в сохраняемых координатах.
+ Из-за этого, преобразование из gpx может приводить к потерям точности.
+ Но т.к. погрешность GPS до 10 метров, несколько секунд большой разницы не играют.
+*/
+
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->ui->treeWidget->clear();
-    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("N")<<tr("Наименование") << tr("Описание") << tr("Координаты") << tr("Дом/Офис"));
+    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("N")<<tr("Наименование") << tr("Описание") << tr("Координаты") /*<< tr("Дом/Офис")*/);
     this->ui->treeWidget->header()->resizeSection(0,90);
     this->ui->treeWidget->header()->resizeSection(1,200);
     this->ui->treeWidget->header()->resizeSection(2,200);
@@ -21,9 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     listMenu.insertSeparator(this->ui->action_del_from_list);
 
     this->ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    this->setWindowTitle(tr("Конвертер избранных точек"));
-
-
+    this->setWindowTitle(tr("Конвертер избранных точек")+" "+VERSION);
 }
 
 MainWindow::~MainWindow()
@@ -66,14 +74,11 @@ void MainWindow::trRawPointToPoint(favRecord_t &favRawPoint, FavPointsList &list
     point.lat = favRawPoint.lat*.00001;
     point.lon = favRawPoint.lon*.00001;
     point.pntType = favRawPoint.pntType;
-    //QTextCodec *codec=QTextCodec::codecForName("UTF-16");
 
     point.desc=QString::fromUtf16((unsigned short*)favRawPoint.desc,0x100);
-
-    //point.desc=codec->toUnicode(favRawPoint.desc,0x100);
     point.desc.truncate(point.desc.indexOf(QChar('\0')));
+
     point.name=QString::fromUtf16((unsigned short*)favRawPoint.name,0x100);
-    //point.name=codec->toUnicode(favRawPoint.name,0x100);
     point.name.truncate(point.name.indexOf(QChar('\0')));
     list.append(point);
 }
@@ -122,7 +127,7 @@ void MainWindow::showPointList(FavPointsList &list, bool append) {
         sList << QString::number(cnt+i).rightJustified(len,' ', false);
         sList << list.at(i).name;
         sList << list.at(i).desc;
-        sList << QString(tr("N %2, E %1")).arg(QString::number(list.at(i).lon,'g',7).leftJustified(8,'0',true)).arg(QString::number(list.at(i).lat,'g',7).leftJustified(8,'0',true));
+        sList << QString(tr("N %2, E %1")).arg(QString::number(list.at(i).lon,'g',8).leftJustified(8,'0',true)).arg(QString::number(list.at(i).lat,'g',8).leftJustified(8,'0',true));
         QTreeWidgetItem *item = new QTreeWidgetItem(sList);
         item->setCheckState(0,Qt::Checked);
         item->setData(0,Qt::UserRole,qVariantFromValue(list.at(i)));
@@ -200,16 +205,19 @@ bool MainWindow::storeInGpx(QString &fileName){
     }
 
     file.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    file.write("<gpx version=\"1.0\" >\n");
+    file.write("<gpx version=\"1.0\" ");
+    file.write("creator=\"pgfconverter ");
+    file.write(VERSION);
+    file.write("\">\n");
     int cnt=this->ui->treeWidget->topLevelItemCount();
     for (int i=0; i<cnt;i++) {
         if (ui->treeWidget->topLevelItem(i)->checkState(0)!=Qt::Checked) continue;
 
         favPoints_t point = ui->treeWidget->topLevelItem(i)->data(0,Qt::UserRole).value<favPoints_t>();
         file.write("<wpt lat=\"");
-        file.write(QString::number(point.lat,'g',10).toLatin1());
+        file.write(QString::number(point.lat,'g',9).toLatin1());
         file.write("\" lon=\"");
-        file.write(QString::number(point.lon,'g',10).toLatin1());
+        file.write(QString::number(point.lon,'g',9).toLatin1());
         file.write("\">\n");
         if (!point.name.isEmpty()){
             file.write("\t<name>");
@@ -229,19 +237,18 @@ bool MainWindow::storeInGpx(QString &fileName){
 
 void MainWindow::pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt) {
     qMemSet((void*)rawPnt->head,0,sizeof(favRecord_t));
+    rawPnt->pntType=0L;
     QTextCodec *codec = QTextCodec::codecForName("UTF-16");
     rawPnt->lat=pnt.lat*100000;
     rawPnt->lon=pnt.lon*100000;
     QByteArray ba = codec->fromUnicode(QString(pnt.name));
 
+    //Из-за каких то глюков Qt, либо я что-то не осилил, но приходиться копировать байты руками...
     for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
         rawPnt->name[i] = ba.at(i+2);
     }
 
-//    qMemCopy(&rawPnt->name[0], ba.constData()+2,pnt.name.size()*2);
-
     ba =  codec->fromUnicode(QString(pnt.desc));
-  //  qMemCopy(&rawPnt->desc[0], ba.constData()+2, pnt.desc.size()*2);
 
     for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
         rawPnt->desc[i] = ba.at(i+2);
