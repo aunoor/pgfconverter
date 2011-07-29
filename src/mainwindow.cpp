@@ -67,9 +67,13 @@ void MainWindow::trRawPointToPoint(favRecord_t &favRawPoint, FavPointsList &list
     point.lat = favRawPoint.lat*.00001;
     point.lon = favRawPoint.lon*.00001;
     QTextCodec *codec=QTextCodec::codecForName("UTF-16");
-    point.desc=codec->toUnicode(favRawPoint.desc,0x100);
+
+    point.desc=QString::fromUtf16((unsigned short*)favRawPoint.desc,0x100);
+
+    //point.desc=codec->toUnicode(favRawPoint.desc,0x100);
     point.desc.truncate(point.desc.indexOf(QChar('\0')));
-    point.name=codec->toUnicode(favRawPoint.name,0x100);
+    point.name=QString::fromUtf16((unsigned short*)favRawPoint.name,0x100);
+    //point.name=codec->toUnicode(favRawPoint.name,0x100);
     point.name.truncate(point.name.indexOf(QChar('\0')));
     list.append(point);
 }
@@ -223,15 +227,26 @@ bool MainWindow::storeInGpx(QString &fileName){
     return true;
 }
 
-void MainWindow::pntToRawPnt(favPoints_t &pnt, favRecord_t &rawPnt) {
-    qMemSet((void*)&rawPnt,0,sizeof(rawPnt));
+void MainWindow::pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt) {
+    qMemSet((void*)rawPnt->head,0,sizeof(favRecord_t));
     QTextCodec *codec = QTextCodec::codecForName("UTF-16");
-    rawPnt.lat=pnt.lat*100000;
-    rawPnt.lon=pnt.lon*100000;
-    QByteArray ba = codec->fromUnicode(pnt.name);
-    qMemCopy(&rawPnt.name[0], ba.data()+2, pnt.name.size()*2);
-    ba =  codec->fromUnicode(pnt.desc);
-    qMemCopy(&rawPnt.desc[0], ba.data()+2, pnt.desc.size()*2);
+    rawPnt->lat=pnt.lat*100000;
+    rawPnt->lon=pnt.lon*100000;
+    QByteArray ba = codec->fromUnicode(QString(pnt.name));
+
+    for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
+        rawPnt->name[i] = ba.at(i+2);
+    }
+
+//    qMemCopy(&rawPnt->name[0], ba.constData()+2,pnt.name.size()*2);
+
+    ba =  codec->fromUnicode(QString(pnt.desc));
+  //  qMemCopy(&rawPnt->desc[0], ba.constData()+2, pnt.desc.size()*2);
+
+    for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
+        rawPnt->desc[i] = ba.at(i+2);
+    }
+
 }
 
 bool MainWindow::storeInFavDat(QString &fileName){
@@ -254,9 +269,10 @@ bool MainWindow::storeInFavDat(QString &fileName){
         if (ui->treeWidget->topLevelItem(i)->checkState(0)!=Qt::Checked) continue;
         cnt++;
         favPoints_t point = ui->treeWidget->topLevelItem(i)->data(0,Qt::UserRole).value<favPoints_t>();
-        favRecord_t rawPnt;
-        pntToRawPnt(point,rawPnt);
-        file.write((char*)&rawPnt,sizeof(rawPnt));
+        favRecord_t *rawPnt = (favRecord_t *)malloc(sizeof(favRecord_t));
+        pntToRawPnt(point, rawPnt);
+        file.write((const char*)rawPnt, sizeof(favRecord_t));
+        free(rawPnt);
     }//for
     file.close();
     return true;

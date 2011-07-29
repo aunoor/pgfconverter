@@ -61,7 +61,7 @@ private:
     void chCheckItems(bool checked);
     bool storeInGpx(QString &fileName);
     bool storeInFavDat(QString &fileName);
-    void pntToRawPnt(favPoints_t &pnt, favRecord_t &rawPnt);
+    void pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt);
     int countCheckedItems();
 };
 
