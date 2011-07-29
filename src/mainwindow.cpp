@@ -9,10 +9,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->ui->treeWidget->clear();
-    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("Наименование") << tr("Описание") << tr("Координаты"));
+    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("N")<<tr("Наименование") << tr("Описание") << tr("Координаты"));
 
-    this->ui->treeWidget->header()->resizeSection(0,200);
+    this->ui->treeWidget->header()->resizeSection(0,90);
     this->ui->treeWidget->header()->resizeSection(1,200);
+    this->ui->treeWidget->header()->resizeSection(2,200);
+    this->ui->treeWidget->sortByColumn(0,Qt::AscendingOrder);
 
     listMenu.addAction(this->ui->action_check_all);
     listMenu.addAction(this->ui->action_uncheck_all);
@@ -106,8 +108,14 @@ bool MainWindow::loadFavRecords(QString fileName, FavPointsList &list)
 
 void MainWindow::showPointList(FavPointsList &list, bool append) {
     if (!append) this->ui->treeWidget->clear();
+    int cnt=1;
+    if (append) cnt=ui->treeWidget->topLevelItemCount()+1;
+
+    //unsigned short len = QString::number(cnt+list.size()).size();
+    unsigned short len = 6;
     for (int i=0;i<list.size();i++) {
         QStringList sList;
+        sList << QString::number(cnt+i).rightJustified(len,' ', false);
         sList << list.at(i).name;
         sList << list.at(i).desc;
         sList << QString(tr("N %2, E %1")).arg(QString::number(list.at(i).lon,'g',7).leftJustified(8,'0',true)).arg(QString::number(list.at(i).lat,'g',7).leftJustified(8,'0',true));
@@ -116,6 +124,7 @@ void MainWindow::showPointList(FavPointsList &list, bool append) {
         item->setData(0,Qt::UserRole,qVariantFromValue(list.at(i)));
         ui->treeWidget->addTopLevelItem(item);
     }
+    ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(0));
 }
 
 bool MainWindow::loadGpx(QString fileName, FavPointsList &list) {
@@ -286,8 +295,8 @@ void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem* item, int colu
     point.desc = desc;
     point.name = name;
     item->setData(0,Qt::UserRole,qVariantFromValue(point));
-    item->setText(0,name);
-    item->setText(1,desc);
+    item->setText(1,name);
+    item->setText(2,desc);
 }
 
 void MainWindow::on_action_del_from_list_triggered()
