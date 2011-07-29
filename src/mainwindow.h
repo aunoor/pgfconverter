@@ -5,7 +5,9 @@
 
 
 typedef struct FavRecord {
-    char head[8];
+    //char head[8];
+    quint32 pntType;//home-office, 4 байта
+    char head[4];
     quint32 lon; //4 байта
     quint32 lat; //4 байта
     char address[0x100];//256 байтов
@@ -15,11 +17,14 @@ typedef struct FavRecord {
     char desc[0x100];//256 байтов
 }favRecord_t;  //0x414 - длина записи.
 
+enum PointType {ptHome=1, ptOffice=2};
+
 typedef struct FavPoints{
    QString name;
    QString desc;
    double lat;
    double lon;
+   quint32 pntType;
 }favPoints_t;
 
 Q_DECLARE_METATYPE(favPoints_t)

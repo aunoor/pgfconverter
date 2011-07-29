@@ -9,8 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->ui->treeWidget->clear();
-    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("N")<<tr("Наименование") << tr("Описание") << tr("Координаты"));
-
+    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("N")<<tr("Наименование") << tr("Описание") << tr("Координаты") << tr("Дом/Офис"));
     this->ui->treeWidget->header()->resizeSection(0,90);
     this->ui->treeWidget->header()->resizeSection(1,200);
     this->ui->treeWidget->header()->resizeSection(2,200);
@@ -66,7 +65,8 @@ void MainWindow::trRawPointToPoint(favRecord_t &favRawPoint, FavPointsList &list
     favPoints_t point;
     point.lat = favRawPoint.lat*.00001;
     point.lon = favRawPoint.lon*.00001;
-    QTextCodec *codec=QTextCodec::codecForName("UTF-16");
+    point.pntType = favRawPoint.pntType;
+    //QTextCodec *codec=QTextCodec::codecForName("UTF-16");
 
     point.desc=QString::fromUtf16((unsigned short*)favRawPoint.desc,0x100);
 
