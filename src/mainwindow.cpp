@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setWindowTitle(tr("Конвертер избранных точек"));
+    changed=false;
 }
 
 MainWindow::~MainWindow()
@@ -404,3 +405,17 @@ void MainWindow::on_action_about_prog_triggered()
     ad.exec();
 
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+ {
+    if (!changed) {
+        event->accept();
+        return;
+    }
+     if (QMessageBox::question(this,tr("Выход"),tr("Есть незаписанные изменения. Действительно выйти?"),QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Ok)!=QMessageBox::Ok) {
+        event->ignore();
+        return;
+     } else {
+         event->accept();
+     }
+ }
