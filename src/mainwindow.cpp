@@ -14,8 +14,8 @@
 */
 
 MainWindow::MainWindow(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::MainWindow)
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->ui->treeWidget->clear();
@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     listMenu.insertSeparator(this->ui->action_del_from_list);
 
     this->ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    this->setWindowTitle(tr("Конвертер избранных точек")+" "+VERSION);
+    this->setWindowTitle(tr("Конвертер избранных точек"));
 }
 
 MainWindow::~MainWindow()
@@ -53,7 +53,8 @@ void MainWindow::on_action_export_fav_triggered()
     QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт favorites.dat"),".",tr("Файл избранных точек ПроГород (favorites.dat *.dat)"));
     if (fileName.isEmpty()) return;
     if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".dat");
-    storeInFavDat(fileName);
+    bool res=storeInFavDat(fileName);
+    if (changed) setChanged(!res);
 }
 
 void MainWindow::on_action_save_gpx_triggered()
@@ -65,7 +66,8 @@ void MainWindow::on_action_save_gpx_triggered()
     QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт gpx waypoints"),".",tr("Файл точек GPX (*.gpx)"));
     if (fileName.isEmpty()) return;
     if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".gpx");
-    storeInGpx(fileName);
+    bool res=storeInGpx(fileName);
+    if (changed) setChanged(!res);
 }
 
 
@@ -293,6 +295,10 @@ void MainWindow::on_action_append_from_file_triggered()
     if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
     else {if (!loadFavRecords(fileName, favList)) return; }
     showPointList(favList, true);
+    if (!openedFileName.isEmpty()) setChanged(true);
+    else { openedFileName = fileName;
+        setChanged(false);
+    }
 }
 
 void MainWindow::on_action_open_file_triggered()
@@ -302,6 +308,8 @@ void MainWindow::on_action_open_file_triggered()
     FavPointsList favList;
     if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
     else {if (!loadFavRecords(fileName, favList)) return; }
+    openedFileName = fileName;
+    setChanged(false);
     showPointList(favList, false);
 }
 
@@ -309,17 +317,18 @@ void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem* item, int colu
 {
     EditPointDialog ed;
     QString name, desc, coords;
-    name = item->text(0);
-    desc = item->text(1);
-    coords = item->text(2);
+    name = item->text(1);
+    desc = item->text(2);
+    coords = item->text(3);
     int res=ed.exec(name, desc, coords);
     if (res==QDialog::Rejected) return;
     favPoints_t point = item->data(0,Qt::UserRole).value<favPoints_t>();
     point.desc = desc;
     point.name = name;
     item->setData(0,Qt::UserRole,qVariantFromValue(point));
-    item->setText(1,name);
-    item->setText(2,desc);
+    item->setText(2,name);
+    item->setText(3,desc);
+    setChanged(true);
 }
 
 void MainWindow::on_action_del_from_list_triggered()
@@ -334,4 +343,55 @@ void MainWindow::on_treeWidget_customContextMenuRequested(QPoint pos)
     QPoint locPos = mapToGlobal(pos);
     locPos.setY(locPos.y()+listMenu.sizeHint().height()-20);
     listMenu.popup(locPos,ui->action_check_all);
+}
+
+void MainWindow::on_action_about_Qt_triggered()
+{
+    qApp->aboutQt();
+}
+
+
+void MainWindow::on_action_save_as_triggered()
+{
+    if (!countCheckedItems()) {
+        QMessageBox::critical(this,QObject::tr("Ошибка"), tr("Не выбрано ни одной точки для сохранения."));
+        return;
+    }
+    QString selFilt;
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Экспорт выбранных точек"),".",tr("Файл точек GPX (*.gpx);; Файл избранных точек ПроГород (favorites.dat *.dat)"),&selFilt);
+    if (fileName.isEmpty()) return;
+    bool res;
+    if (selFilt.contains("gpx")) {
+        if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".gpx");
+        res = storeInGpx(fileName);
+    } else {
+        if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".dat");
+        res = storeInFavDat(fileName);
+    }
+    if (changed) setChanged(!res);
+}
+
+void MainWindow::setChanged(bool ch)
+{
+    changed = ch;
+    QString wt=tr("Конвертер избранных точек");
+    if (!openedFileName.isEmpty()) {
+        wt.append(" ("+QFileInfo(openedFileName).fileName());
+        wt.append(")");
+    }
+    if (changed) wt.append(" *");
+    this->setWindowTitle(wt);
+}
+
+void MainWindow::on_action_save_triggered()
+{
+    if (openedFileName.isEmpty()) return;
+    bool res;
+    if (QFileInfo(openedFileName).suffix()=="gpx") {
+        res = storeInGpx(openedFileName);
+    } else
+    {
+        res = storeInFavDat(openedFileName);
+    }
+    if (changed) setChanged(!res);
 }

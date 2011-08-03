@@ -55,10 +55,17 @@ private slots:
     void on_action_save_gpx_triggered();
     void on_action_check_all_triggered();
     void on_action_uncheck_all_triggered();
+    void on_action_about_Qt_triggered();
+
+    void on_action_save_as_triggered();
+
+    void on_action_save_triggered();
 
 private:
     Ui::MainWindow *ui;
     QMenu listMenu;
+    bool changed;
+    QString openedFileName;
     bool loadFavRecords(QString fileName, FavPointsList &list);
     void trRawPointToPoint(favRecord_t &favRawPoint, FavPointsList &list);
     void showPointList(FavPointsList &list, bool append);
@@ -67,7 +74,8 @@ private:
     bool storeInGpx(QString &fileName);
     bool storeInFavDat(QString &fileName);
     void pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt);
-    int countCheckedItems();
+    int  countCheckedItems();
+    void setChanged(bool ch);
 };
 
 #endif // MAINWINDOW_H

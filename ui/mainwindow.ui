@@ -80,6 +80,35 @@
    <addaction name="action_export_fav"/>
    <addaction name="action_exit"/>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>653</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="action_open_file"/>
+    <addaction name="action_append_from_file"/>
+    <addaction name="action_save"/>
+    <addaction name="action_save_as"/>
+    <addaction name="action_exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="action_about_prog"/>
+    <addaction name="action_about_Qt"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+  </widget>
   <action name="action_export_fav">
    <property name="text">
     <string>Сохранить в ПроГород</string>
@@ -94,6 +123,9 @@
    <property name="text">
     <string>Выход</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="action_check_all">
    <property name="text">
@@ -107,20 +139,49 @@
   </action>
   <action name="action_append_from_file">
    <property name="text">
-    <string>Добавить из файла</string>
+    <string>Добавить из файла...</string>
    </property>
    <property name="toolTip">
     <string>Добавить из файла</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="action_open_file">
    <property name="text">
-    <string>Открыть файл</string>
+    <string>Открыть файл...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="action_del_from_list">
    <property name="text">
     <string>Удалить из списка</string>
+   </property>
+  </action>
+  <action name="action_about_prog">
+   <property name="text">
+    <string>О программе...</string>
+   </property>
+  </action>
+  <action name="action_about_Qt">
+   <property name="text">
+    <string>О Qt...</string>
+   </property>
+  </action>
+  <action name="action_save">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_save_as">
+   <property name="text">
+    <string>Сохранить как...</string>
    </property>
   </action>
  </widget>
