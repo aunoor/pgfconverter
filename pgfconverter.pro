@@ -10,11 +10,14 @@ CONFIG -= app_bundle
 TEMPLATE = app
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
-    src/editpointdialog.cpp
+    src/editpointdialog.cpp \
+    src/aboutdialog.cpp
 HEADERS += src/mainwindow.h \
-    src/editpointdialog.h
+    src/editpointdialog.h \
+    src/aboutdialog.h
 FORMS += ui/mainwindow.ui \
-    ui/editpointdialog.ui
+    ui/editpointdialog.ui \
+    ui/aboutdialog.ui
 INCLUDEPATH += src
 UI_DIR = tmp/.ui
 MOC_DIR = tmp/.moc

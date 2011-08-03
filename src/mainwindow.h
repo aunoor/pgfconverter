@@ -61,6 +61,8 @@ private slots:
 
     void on_action_save_triggered();
 
+    void on_action_about_prog_triggered();
+
 private:
     Ui::MainWindow *ui;
     QMenu listMenu;

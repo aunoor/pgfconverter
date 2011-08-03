@@ -2,8 +2,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "editpointdialog.h"
+#include "aboutdialog.h"
 
-#define VERSION "v1.0.3"
+#define VERSION "v1.0.4"
 
 /*
  Координаты храняться в little endian uint32.
@@ -350,7 +351,6 @@ void MainWindow::on_action_about_Qt_triggered()
     qApp->aboutQt();
 }
 
-
 void MainWindow::on_action_save_as_triggered()
 {
     if (!countCheckedItems()) {
@@ -394,4 +394,12 @@ void MainWindow::on_action_save_triggered()
         res = storeInFavDat(openedFileName);
     }
     if (changed) setChanged(!res);
+}
+
+void MainWindow::on_action_about_prog_triggered()
+{
+    AboutDialog ad(this);
+    ad.setVersion(VERSION);
+    ad.exec();
+
 }
