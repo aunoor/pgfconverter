@@ -327,8 +327,8 @@ void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem* item, int colu
     point.desc = desc;
     point.name = name;
     item->setData(0,Qt::UserRole,qVariantFromValue(point));
-    item->setText(2,name);
-    item->setText(3,desc);
+    item->setText(1,name);
+    item->setText(2,desc);
     setChanged(true);
 }
 
