@@ -336,6 +336,7 @@ void MainWindow::on_action_del_from_list_triggered()
 {
     if (!ui->treeWidget->currentItem()) return;
     ui->treeWidget->model()->removeRow(ui->treeWidget->currentIndex().row());
+    setChanged(true);
 }
 
 void MainWindow::on_treeWidget_customContextMenuRequested(QPoint pos)
