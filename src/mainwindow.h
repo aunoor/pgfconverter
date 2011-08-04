@@ -78,6 +78,8 @@ private:
     void pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt);
     int  countCheckedItems();
     void setChanged(bool ch);
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H
