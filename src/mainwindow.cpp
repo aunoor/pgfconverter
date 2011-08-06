@@ -4,8 +4,6 @@
 #include "editpointdialog.h"
 #include "aboutdialog.h"
 
-#define VERSION "v1.0.4"
-
 /*
  Координаты храняться в little endian uint32.
 
@@ -19,21 +17,24 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->ui->treeWidget->clear();
-    this->ui->treeWidget->setHeaderLabels(QStringList() << tr("N")<<tr("Наименование") << tr("Описание") << tr("Координаты") /*<< tr("Дом/Офис")*/);
-    this->ui->treeWidget->header()->resizeSection(0,90);
-    this->ui->treeWidget->header()->resizeSection(1,200);
-    this->ui->treeWidget->header()->resizeSection(2,200);
-    this->ui->treeWidget->sortByColumn(0,Qt::AscendingOrder);
+
+    this->ui->treeView->setModel(&this->pointModel);
+
+    this->ui->treeView->header()->resizeSection(0,90);
+    this->ui->treeView->header()->resizeSection(1,200);
+    this->ui->treeView->header()->resizeSection(2,200);
+    this->ui->treeView->sortByColumn(0,Qt::AscendingOrder);
+    this->ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     listMenu.addAction(this->ui->action_check_all);
     listMenu.addAction(this->ui->action_uncheck_all);
     listMenu.addAction(this->ui->action_del_from_list);
     listMenu.insertSeparator(this->ui->action_del_from_list);
 
-    this->ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setWindowTitle(tr("Конвертер избранных точек"));
     changed=false;
+
+    connect(&pointModel,SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),SLOT(pointModel_dataChanged_slot(const QModelIndex &, const QModelIndex &)));
 }
 
 MainWindow::~MainWindow()
@@ -72,21 +73,6 @@ void MainWindow::on_action_save_gpx_triggered()
     if (changed) setChanged(!res);
 }
 
-
-void MainWindow::trRawPointToPoint(favRecord_t &favRawPoint, FavPointsList &list) {
-    favPoints_t point;
-    point.lat = favRawPoint.lat*.00001;
-    point.lon = favRawPoint.lon*.00001;
-    point.pntType = favRawPoint.pntType;
-
-    point.desc=QString::fromUtf16((unsigned short*)favRawPoint.desc,0x100);
-    point.desc.truncate(point.desc.indexOf(QChar('\0')));
-
-    point.name=QString::fromUtf16((unsigned short*)favRawPoint.name,0x100);
-    point.name.truncate(point.name.indexOf(QChar('\0')));
-    list.append(point);
-}
-
 bool MainWindow::loadFavRecords(QString fileName, FavPointsList &list)
 {
     QFile file(fileName);
@@ -113,31 +99,18 @@ bool MainWindow::loadFavRecords(QString fileName, FavPointsList &list)
         }
         favRecord_t favRawPoint;
         qMemCopy(&favRawPoint,ba.data(),0x414);
-        trRawPointToPoint(favRawPoint, list);
+        addRawPointToPointList(favRawPoint, list);
     }
     file.close();
     return true;
 }
 
 void MainWindow::showPointList(FavPointsList &list, bool append) {
-    if (!append) this->ui->treeWidget->clear();
-    int cnt=1;
-    if (append) cnt=ui->treeWidget->topLevelItemCount()+1;
-
-    //unsigned short len = QString::number(cnt+list.size()).size();
-    unsigned short len = 6;
+    if (!append) this->pointModel.clearModel();
     for (int i=0;i<list.size();i++) {
-        QStringList sList;
-        sList << QString::number(cnt+i).rightJustified(len,' ', false);
-        sList << list.at(i).name;
-        sList << list.at(i).desc;
-        sList << QString(tr("N %2, E %1")).arg(QString::number(list.at(i).lon,'g',8).leftJustified(8,'0',true)).arg(QString::number(list.at(i).lat,'g',8).leftJustified(8,'0',true));
-        QTreeWidgetItem *item = new QTreeWidgetItem(sList);
-        item->setCheckState(0,Qt::Checked);
-        item->setData(0,Qt::UserRole,qVariantFromValue(list.at(i)));
-        ui->treeWidget->addTopLevelItem(item);
+        pointModel.appendPoint(list.at(i));
     }
-    ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(0));
+    ui->treeView->setCurrentIndex(pointModel.index(0,0,QModelIndex()));
 }
 
 bool MainWindow::loadGpx(QString fileName, FavPointsList &list) {
@@ -162,6 +135,8 @@ bool MainWindow::loadGpx(QString fileName, FavPointsList &list) {
                 favPoints_t point;
                 point.lon = e.attributeNode("lon").value().toDouble();
                 point.lat = e.attributeNode("lat").value().toDouble();
+                point.checked = true;
+                point.uuid = QUuid::createUuid();
                 QDomNodeList nl=e.childNodes();
                 for (int i=0;i<nl.size();i++) {
                     if (nl.at(i).nodeName().toLower()=="name") point.name=nl.at(i).toElement().text();
@@ -176,9 +151,9 @@ bool MainWindow::loadGpx(QString fileName, FavPointsList &list) {
 }
 
 void MainWindow::chCheckItems(bool checked) {
-    int cnt=this->ui->treeWidget->topLevelItemCount();
+    int cnt=pointModel.rowCount(QModelIndex());
     for (int i=0; i<cnt;i++) {
-        ui->treeWidget->topLevelItem(i)->setCheckState(0,checked?Qt::Checked:Qt::Unchecked);
+        pointModel.setPointChecked(i,checked);
     }
 }
 
@@ -193,11 +168,7 @@ void MainWindow::on_action_uncheck_all_triggered()
 }
 
 int MainWindow::countCheckedItems() {
-    int cnt=0;
-    for (int i=0; i<this->ui->treeWidget->topLevelItemCount();i++) {
-        if (ui->treeWidget->topLevelItem(i)->checkState(0)==Qt::Checked) cnt++;
-    }
-    return cnt;
+    return pointModel.getCheckedCount();
 }
 
 bool MainWindow::storeInGpx(QString &fileName){
@@ -213,11 +184,10 @@ bool MainWindow::storeInGpx(QString &fileName){
     file.write("creator=\"pgfconverter ");
     file.write(VERSION);
     file.write("\">\n");
-    int cnt=this->ui->treeWidget->topLevelItemCount();
+    int cnt=pointModel.getPointsCount();
     for (int i=0; i<cnt;i++) {
-        if (ui->treeWidget->topLevelItem(i)->checkState(0)!=Qt::Checked) continue;
-
-        favPoints_t point = ui->treeWidget->topLevelItem(i)->data(0,Qt::UserRole).value<favPoints_t>();
+        if (!pointModel.getPoint(i).checked) continue;
+        favPoints_t point = pointModel.getPoint(i);
         file.write("<wpt lat=\"");
         file.write(QString::number(point.lat,'g',9).toLatin1());
         file.write("\" lon=\"");
@@ -239,27 +209,6 @@ bool MainWindow::storeInGpx(QString &fileName){
     return true;
 }
 
-void MainWindow::pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt) {
-    qMemSet((void*)rawPnt->head,0,sizeof(favRecord_t));
-    rawPnt->pntType=0L;
-    QTextCodec *codec = QTextCodec::codecForName("UTF-16");
-    rawPnt->lat=pnt.lat*100000;
-    rawPnt->lon=pnt.lon*100000;
-    QByteArray ba = codec->fromUnicode(QString(pnt.name));
-
-    //Из-за каких то глюков Qt, либо я что-то не осилил, но приходиться копировать байты руками...
-    for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
-        rawPnt->name[i] = ba.at(i+2);
-    }
-
-    ba =  codec->fromUnicode(QString(pnt.desc));
-
-    for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
-        rawPnt->desc[i] = ba.at(i+2);
-    }
-
-}
-
 bool MainWindow::storeInFavDat(QString &fileName){
     QFile file(fileName);
     bool res = file.open(QIODevice::WriteOnly);
@@ -276,10 +225,9 @@ bool MainWindow::storeInFavDat(QString &fileName){
     file.write((char*)&cnt,4);
     file.seek(6);
     //пишем данные
-    for (int i=0; i<this->ui->treeWidget->topLevelItemCount();i++) {
-        if (ui->treeWidget->topLevelItem(i)->checkState(0)!=Qt::Checked) continue;
-        cnt++;
-        favPoints_t point = ui->treeWidget->topLevelItem(i)->data(0,Qt::UserRole).value<favPoints_t>();
+    for (int i=0; i<pointModel.getPointsCount();i++) {
+        if (!pointModel.getPoint(i).checked) continue;
+        favPoints_t point = pointModel.getPoint(i);
         favRecord_t *rawPnt = (favRecord_t *)malloc(sizeof(favRecord_t));
         pntToRawPnt(point, rawPnt);
         file.write((const char*)rawPnt, sizeof(favRecord_t));
@@ -287,6 +235,7 @@ bool MainWindow::storeInFavDat(QString &fileName){
     }//for
     file.close();
     return true;
+
 }
 
 void MainWindow::on_action_append_from_file_triggered()
@@ -305,44 +254,29 @@ void MainWindow::on_action_append_from_file_triggered()
 
 void MainWindow::on_action_open_file_triggered()
 {
+
     QString fileName = QFileDialog::getOpenFileName(this,tr("Открыть список точек"),".",tr("Файлы с путевыми точками (*.gpx favorites.dat *.dat)"));
     if (fileName.isEmpty()) return;
     FavPointsList favList;
     if (QFileInfo(fileName).suffix()=="gpx") {if (!loadGpx(fileName, favList)) return;}
     else {if (!loadFavRecords(fileName, favList)) return; }
     openedFileName = fileName;
-    setChanged(false);
     showPointList(favList, false);
-}
-
-void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem* item, int column)
-{
-    EditPointDialog ed;
-    QString name, desc, coords;
-    name = item->text(1);
-    desc = item->text(2);
-    coords = item->text(3);
-    int res=ed.exec(name, desc, coords);
-    if (res==QDialog::Rejected) return;
-    favPoints_t point = item->data(0,Qt::UserRole).value<favPoints_t>();
-    point.desc = desc;
-    point.name = name;
-    item->setData(0,Qt::UserRole,qVariantFromValue(point));
-    item->setText(1,name);
-    item->setText(2,desc);
-    setChanged(true);
+    setChanged(false);
 }
 
 void MainWindow::on_action_del_from_list_triggered()
 {
-    if (!ui->treeWidget->currentItem()) return;
-    ui->treeWidget->model()->removeRow(ui->treeWidget->currentIndex().row());
-    setChanged(true);
+    QModelIndex index=ui->treeView->currentIndex();
+    if (!index.isValid()) return;
+    pointModel.removeRow(index.row());
+    //setChanged(true);
 }
 
-void MainWindow::on_treeWidget_customContextMenuRequested(QPoint pos)
+void MainWindow::on_treeView_customContextMenuRequested(QPoint pos)
 {
-    ui->action_del_from_list->setEnabled(ui->treeWidget->itemAt(pos));
+
+    ui->action_del_from_list->setEnabled(ui->treeView->indexAt(pos).isValid());
     QPoint locPos = mapToGlobal(pos);
     locPos.setY(locPos.y()+listMenu.sizeHint().height()-20);
     listMenu.popup(locPos,ui->action_check_all);
@@ -387,7 +321,11 @@ void MainWindow::setChanged(bool ch)
 
 void MainWindow::on_action_save_triggered()
 {
-    if (openedFileName.isEmpty()) return;
+    if (openedFileName.isEmpty()) {
+        on_action_save_as_triggered();
+        return;
+    }
+
     bool res;
     if (QFileInfo(openedFileName).suffix()=="gpx") {
         res = storeInGpx(openedFileName);
@@ -403,7 +341,6 @@ void MainWindow::on_action_about_prog_triggered()
     AboutDialog ad(this);
     ad.setVersion(VERSION);
     ad.exec();
-
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -419,3 +356,26 @@ void MainWindow::closeEvent(QCloseEvent *event)
          event->accept();
      }
  }
+
+void MainWindow::on_treeView_doubleClicked(QModelIndex index)
+{
+
+    EditPointDialog ed;
+    QString name, desc, coords;
+    favPoints_t point=pointModel.getPoint(index.row());
+    name = point.name;
+    desc = point.desc;
+    coords = index.model()->data(pointModel.index(index.row(),3,QModelIndex()),Qt::DisplayRole).toString();
+    int res=ed.exec(name, desc, coords);
+    if (res==QDialog::Rejected) return;
+
+    point.desc = desc;
+    point.name = name;
+
+    pointModel.setPoint(index.row(),point);
+}
+
+void MainWindow::pointModel_dataChanged_slot(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+   setChanged(true);
+}

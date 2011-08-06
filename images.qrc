@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/gui" >
+        <file>icons/add.ico</file>
+        <file>icons/add2.ico</file>
+        <file>icons/open.ico</file>
+    </qresource>
+</RCC>
