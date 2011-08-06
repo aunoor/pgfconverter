@@ -251,7 +251,7 @@ void PointModel::setPointChecked(int row, bool checked)
 
 int PointModel::getCheckedCount()
 {
-    uint cnt;
+    uint cnt=0;
     for (int i=0;i<pointList.count();i++) {
         if (pointList.at(i).checked) cnt++;
     }
