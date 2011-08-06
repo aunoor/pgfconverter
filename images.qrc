@@ -1,7 +1,16 @@
 <RCC>
     <qresource prefix="/gui" >
-        <file>icons/add.ico</file>
-        <file>icons/add2.ico</file>
-        <file>icons/open.ico</file>
+        <file>icons/open.png</file>
+        <file>icons/open_add.png</file>
+        <file>icons/save.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/exit.png</file>
+        <file>icons/check_all.png</file>
+        <file>icons/save_as.png</file>
+        <file>icons/uncheck_all.png</file>
+        <file>icons/save_as_gpx.png</file>
+        <file>icons/save_as_pg.png</file>
+        <file>icons/help.png</file>
+        <file>icons/map_edit.png</file>
     </qresource>
 </RCC>
