@@ -13,46 +13,23 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
+    <normaloff>:/gui/icons/map_edit.png</normaloff>:/gui/icons/map_edit.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTreeWidget" name="treeWidget">
+     <widget class="QTreeView" name="treeView">
+      <property name="dragEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="dragDropMode">
+       <enum>QAbstractItemView::DragDrop</enum>
+      </property>
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
-      <property name="animated">
-       <bool>true</bool>
-      </property>
-      <property name="allColumnsShowFocus">
-       <bool>true</bool>
-      </property>
-      <property name="headerHidden">
-       <bool>false</bool>
-      </property>
-      <property name="expandsOnDoubleClick">
-       <bool>false</bool>
-      </property>
-      <property name="columnCount">
-       <number>3</number>
-      </property>
-      <attribute name="headerShowSortIndicator" stdset="0">
-       <bool>true</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string notr="true">1</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string notr="true">2</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string notr="true">3</string>
-       </property>
-      </column>
      </widget>
     </item>
    </layout>
@@ -86,7 +63,7 @@
      <x>0</x>
      <y>0</y>
      <width>653</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -110,16 +87,28 @@
    <addaction name="menu_2"/>
   </widget>
   <action name="action_export_fav">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/save_as_pg.png</normaloff>:/gui/icons/save_as_pg.png</iconset>
+   </property>
    <property name="text">
     <string>Сохранить в ПроГород</string>
    </property>
   </action>
   <action name="action_save_gpx">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/save_as_gpx.png</normaloff>:/gui/icons/save_as_gpx.png</iconset>
+   </property>
    <property name="text">
     <string>Сохранить в gpx</string>
    </property>
   </action>
   <action name="action_exit">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/exit.png</normaloff>:/gui/icons/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Выход</string>
    </property>
@@ -128,16 +117,28 @@
    </property>
   </action>
   <action name="action_check_all">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/check_all.png</normaloff>:/gui/icons/check_all.png</iconset>
+   </property>
    <property name="text">
     <string>Отметить все</string>
    </property>
   </action>
   <action name="action_uncheck_all">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/uncheck_all.png</normaloff>:/gui/icons/uncheck_all.png</iconset>
+   </property>
    <property name="text">
     <string>Сбросить выбор</string>
    </property>
   </action>
   <action name="action_append_from_file">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/open_add.png</normaloff>:/gui/icons/open_add.png</iconset>
+   </property>
    <property name="text">
     <string>Добавить из файла...</string>
    </property>
@@ -149,6 +150,10 @@
    </property>
   </action>
   <action name="action_open_file">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/open.png</normaloff>:/gui/icons/open.png</iconset>
+   </property>
    <property name="text">
     <string>Открыть файл...</string>
    </property>
@@ -157,11 +162,19 @@
    </property>
   </action>
   <action name="action_del_from_list">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/delete.png</normaloff>:/gui/icons/delete.png</iconset>
+   </property>
    <property name="text">
     <string>Удалить из списка</string>
    </property>
   </action>
   <action name="action_about_prog">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/help.png</normaloff>:/gui/icons/help.png</iconset>
+   </property>
    <property name="text">
     <string>О программе...</string>
    </property>
@@ -172,6 +185,10 @@
    </property>
   </action>
   <action name="action_save">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/save.png</normaloff>:/gui/icons/save.png</iconset>
+   </property>
    <property name="text">
     <string>Сохранить</string>
    </property>
@@ -180,11 +197,17 @@
    </property>
   </action>
   <action name="action_save_as">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/save_as.png</normaloff>:/gui/icons/save_as.png</iconset>
+   </property>
    <property name="text">
     <string>Сохранить как...</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
