@@ -12,5 +12,7 @@
         <file>icons/save_as_pg.png</file>
         <file>icons/help.png</file>
         <file>icons/map_edit.png</file>
+        <file>icons/bt_home_n.2.png</file>
+        <file>icons/bt_office_n.2.png</file>
     </qresource>
 </RCC>

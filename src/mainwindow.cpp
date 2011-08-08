@@ -285,9 +285,7 @@ void MainWindow::on_treeView_customContextMenuRequested(QPoint pos)
 {
 
     ui->action_del_from_list->setEnabled(ui->treeView->indexAt(pos).isValid());
-    ui->action_set_home->setEnabled(ui->treeView->indexAt(pos).isValid());
-    ui->action_set_office->setEnabled(ui->treeView->indexAt(pos).isValid());
-    ui->action_set_icon->setEnabled(ui->treeView->indexAt(pos).isValid());
+    iconMenu.setEnabled(ui->treeView->indexAt(pos).isValid());
     QPoint locPos = mapToGlobal(pos);
     locPos.setY(locPos.y()+listMenu.sizeHint().height()-20);
     listMenu.popup(locPos,ui->action_check_all);
@@ -417,22 +415,23 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 void MainWindow::setIcon_Type()
 {
     qDebug() << __func__;
-    qDebug() << this->sender()->userData(Qt::UserRole);
+    qDebug() << ((QAction*)this->sender())->data();
 }
 
 void MainWindow::initIconMenu()
 {
+    iconMenu.setTitle(tr("Иконки..."));
     QAction *action;
     action = iconMenu.addAction(tr("Сбросить тип"),this,SLOT(setIcon_Type()));
     action->setData(99);
-    QIcon icon = QIcon(":/gui/icons/home.png");
+    QIcon icon = QIcon(":/gui/icons/bt_home_n.2.png");
     action = iconMenu.addAction(icon,tr("Дом"),this,SLOT(setIcon_Type()));
     action->setData(98);
-    icon = QIcon(":/gui/icons/office.png");
+    icon = QIcon(":/gui/icons/bt_office_n.2.png");
     action = iconMenu.addAction(icon,tr("Офис"),this,SLOT(setIcon_Type()));
     action->setData(97);
     iconMenu.addSeparator();
-    action = iconMenu.addAction(tr("Сбросить тип"),this,SLOT(setIcon_Type()));
+    action = iconMenu.addAction(tr("Убрать иконку"),this,SLOT(setIcon_Type()));
     action->setData(96);
     for (int i=0;i<10;i++) {
 
