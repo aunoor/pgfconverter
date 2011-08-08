@@ -55,7 +55,6 @@
    <addaction name="action_append_from_file"/>
    <addaction name="action_save_gpx"/>
    <addaction name="action_export_fav"/>
-   <addaction name="action_exit"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -63,7 +62,7 @@
      <x>0</x>
      <y>0</y>
      <width>653</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
