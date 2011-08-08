@@ -51,6 +51,7 @@ private:
 
 protected:
     void closeEvent(QCloseEvent *event);
+    bool eventFilter(QObject *, QEvent *);
 };
 
 #endif // MAINWINDOW_H

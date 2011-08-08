@@ -80,6 +80,8 @@ QVariant PointModel::headerData ( int section, Qt::Orientation orientation, int 
 
 QModelIndex PointModel::index(int row, int column, const QModelIndex & parent) const
 {
+    if (row>pointList.count()-1) return QModelIndex();
+    if (row<-1) return QModelIndex();
     return createIndex(row, column, (int)QString(QString::number(row)+QString::number(column)+QString::number(row*column)).toLongLong());
 }
 
@@ -273,4 +275,19 @@ void PointModel::setPoint(int row, favPoints_t &point)
     if (row>pointList.count()-1) return;
     pointList[row] = point;
     emit dataChanged(index(row,0,QModelIndex()),index(row,columnCount(QModelIndex())));
+}
+
+bool PointModel::swapRows(int oldRow, int newRow)
+{
+    QModelIndex oldIndex=index(oldRow,0,QModelIndex());
+    QModelIndex newIndex=index(newRow,0,QModelIndex());
+    return swapRows(oldIndex, newIndex);
+}
+
+bool PointModel::swapRows(QModelIndex &oldRow, QModelIndex &newRow)
+{
+    if (!oldRow.isValid() || !newRow.isValid()) return false;
+    pointList.swap(oldRow.row(), newRow.row());
+    emit dataChanged(index(oldRow.row(),0,QModelIndex()),index(newRow.row(),columnCount(QModelIndex())));
+    return true;
 }

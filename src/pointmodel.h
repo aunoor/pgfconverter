@@ -32,6 +32,8 @@ public:
     favPoints_t getPoint(int row); //возвращает данные точки. Если row>количества точек, все упадет. намеренно!
     int getPointsCount(); //возвращает количество точек в модели
     void setPoint(int row, favPoints_t &point); //записываем данные точки
+    bool swapRows(int oldRow, int newRow); //меняет записи местами
+    bool swapRows(QModelIndex &oldRow, QModelIndex &newRow); //меняет записи местами
 };
 
 #endif // POINTMODEL_H

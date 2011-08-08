@@ -34,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(tr("Конвертер избранных точек"));
     changed=false;
 
+    ui->treeView->installEventFilter(this);
+
     connect(&pointModel,SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),SLOT(pointModel_dataChanged_slot(const QModelIndex &, const QModelIndex &)));
 }
 
@@ -378,4 +380,27 @@ void MainWindow::on_treeView_doubleClicked(QModelIndex index)
 void MainWindow::pointModel_dataChanged_slot(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
    setChanged(true);
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+    if (object==this->ui->treeView && event->type()==QEvent::KeyPress) {
+        if (!ui->treeView->currentIndex().isValid()) return false;
+        QKeyEvent *kEvent = (QKeyEvent*)event;
+        if (!(kEvent->modifiers() & Qt::ControlModifier)) return false;
+        QModelIndex cIndex=ui->treeView->currentIndex();
+        QModelIndex uIndex;
+        if (kEvent->key()==Qt::Key_Up) {
+            uIndex=pointModel.index(cIndex.row()-1,0,QModelIndex());
+        } else if (kEvent->key()==Qt::Key_Down) {
+            uIndex=pointModel.index(cIndex.row()+1,0,QModelIndex());
+        }
+        if (!uIndex.isValid()) return false;
+        if (pointModel.swapRows(cIndex,uIndex)) {
+            ui->treeView->setCurrentIndex(uIndex);
+            kEvent->accept();
+            return true;
+        }
+    }
+    return false;
 }
