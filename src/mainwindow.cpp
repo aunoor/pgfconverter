@@ -26,10 +26,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->treeView->sortByColumn(0,Qt::AscendingOrder);
     this->ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    initIconMenu();
+
     listMenu.addAction(this->ui->action_check_all);
     listMenu.addAction(this->ui->action_uncheck_all);
+    listMenu.addSeparator();
+    listMenu.addMenu(&iconMenu);
+    listMenu.addSeparator();
     listMenu.addAction(this->ui->action_del_from_list);
-    listMenu.insertSeparator(this->ui->action_del_from_list);
 
     this->setWindowTitle(tr("Конвертер избранных точек"));
     changed=false;
@@ -139,6 +143,8 @@ bool MainWindow::loadGpx(QString fileName, FavPointsList &list) {
                 point.lat = e.attributeNode("lat").value().toDouble();
                 point.checked = true;
                 point.uuid = QUuid::createUuid();
+                point.iconNum = 0;
+                point.pntType = 0;
                 QDomNodeList nl=e.childNodes();
                 for (int i=0;i<nl.size();i++) {
                     if (nl.at(i).nodeName().toLower()=="name") point.name=nl.at(i).toElement().text();
@@ -279,6 +285,9 @@ void MainWindow::on_treeView_customContextMenuRequested(QPoint pos)
 {
 
     ui->action_del_from_list->setEnabled(ui->treeView->indexAt(pos).isValid());
+    ui->action_set_home->setEnabled(ui->treeView->indexAt(pos).isValid());
+    ui->action_set_office->setEnabled(ui->treeView->indexAt(pos).isValid());
+    ui->action_set_icon->setEnabled(ui->treeView->indexAt(pos).isValid());
     QPoint locPos = mapToGlobal(pos);
     locPos.setY(locPos.y()+listMenu.sizeHint().height()-20);
     listMenu.popup(locPos,ui->action_check_all);
@@ -403,4 +412,29 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
         }
     }
     return false;
+}
+
+void MainWindow::setIcon_Type()
+{
+    qDebug() << __func__;
+    qDebug() << this->sender()->userData(Qt::UserRole);
+}
+
+void MainWindow::initIconMenu()
+{
+    QAction *action;
+    action = iconMenu.addAction(tr("Сбросить тип"),this,SLOT(setIcon_Type()));
+    action->setData(99);
+    QIcon icon = QIcon(":/gui/icons/home.png");
+    action = iconMenu.addAction(icon,tr("Дом"),this,SLOT(setIcon_Type()));
+    action->setData(98);
+    icon = QIcon(":/gui/icons/office.png");
+    action = iconMenu.addAction(icon,tr("Офис"),this,SLOT(setIcon_Type()));
+    action->setData(97);
+    iconMenu.addSeparator();
+    action = iconMenu.addAction(tr("Сбросить тип"),this,SLOT(setIcon_Type()));
+    action->setData(96);
+    for (int i=0;i<10;i++) {
+
+    }
 }

@@ -33,10 +33,13 @@ private slots:
     void on_action_save_triggered();
     void on_action_about_prog_triggered();
     void pointModel_dataChanged_slot(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void setIcon_Type();
 
 private:
     Ui::MainWindow *ui;
     QMenu listMenu;
+    QMenu iconMenu;
+    QList<QAction*> iconActions;
     bool changed;
     QString openedFileName;
     PointModel pointModel;
@@ -48,6 +51,7 @@ private:
     bool storeInFavDat(QString &fileName);
     int  countCheckedItems();
     void setChanged(bool ch);
+    void initIconMenu();
 
 protected:
     void closeEvent(QCloseEvent *event);

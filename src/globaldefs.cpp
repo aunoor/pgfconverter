@@ -9,7 +9,7 @@ void pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt)
     rawPnt->lon=pnt.lon*100000;
     QByteArray ba = codec->fromUnicode(QString(pnt.name));
 
-    //Из-за каких то глюков Qt, либо я что-то не осилил, но приходиться копировать байты руками...
+    //РР·-Р·Р° РєР°РєРёС… С‚Рѕ РіР»СЋРєРѕРІ Qt, Р»РёР±Рѕ СЏ С‡С‚Рѕ-С‚Рѕ РЅРµ РѕСЃРёР»РёР», РЅРѕ РїСЂРёС…РѕРґРёС‚СЊСЃСЏ РєРѕРїРёСЂРѕРІР°С‚СЊ Р±Р°Р№С‚С‹ СЂСѓРєР°РјРё...
     for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
         rawPnt->name[i] = ba.at(i+2);
     }
@@ -38,6 +38,7 @@ favPoints_t trRawPointToPoint(favRecord_t &favRawPoint) {
     point.name.truncate(point.name.indexOf(QChar('\0')));
     point.checked = true;
     point.uuid = QUuid::createUuid();
+    point.iconNum = favRawPoint.iconNum;
     return point;
 }
 

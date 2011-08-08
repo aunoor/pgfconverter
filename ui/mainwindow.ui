@@ -204,6 +204,30 @@
     <string>Сохранить как...</string>
    </property>
   </action>
+  <action name="action_set_home">
+   <property name="text">
+    <string>Дом</string>
+   </property>
+   <property name="toolTip">
+    <string>Установить тип точки &quot;Дом&quot;</string>
+   </property>
+  </action>
+  <action name="action_set_office">
+   <property name="text">
+    <string>Офис</string>
+   </property>
+   <property name="toolTip">
+    <string>Установит тип точки &quot;Офис&quot;</string>
+   </property>
+  </action>
+  <action name="action_set_icon">
+   <property name="text">
+    <string>Иконка...</string>
+   </property>
+   <property name="toolTip">
+    <string>Установить иконку точки</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../images.qrc"/>

@@ -22,10 +22,29 @@ QVariant PointModel::data(const QModelIndex & index, int role) const
         else if (index.column()==1) return ((favPoints_t)pointList.at(index.row())).name;
         else if (index.column()==2) return ((favPoints_t)pointList.at(index.row())).desc;
         else if (index.column()==3) return QString(tr("N %2, E %1")).arg(QString::number(pointList.at(index.row()).lon,'g',8).leftJustified(8,'0',true)).arg(QString::number(pointList.at(index.row()).lat,'g',8).leftJustified(8,'0',true));
+        else if (index.column()==4) return QString("home/office");
         break;
-          case Qt::CheckStateRole:
+    case Qt::CheckStateRole:
         if (index.column()==0) return ((favPoints_t)pointList.at(index.row())).checked?Qt::Checked:Qt::Unchecked;
         else return QVariant();
+        break;
+    case Qt::DecorationRole:
+        if (index.column()==0)
+        {
+            if (!pointList.at(index.row()).iconNum) return QVariant();
+            QString iconName=":/gui/icons/icon"+QString::number(pointList.at(index.row()).iconNum)+".png";
+            QIcon icon(":/gui/icons/help.png");
+            return icon;
+        } else
+        if (index.column()==1)
+        {
+            if (!pointList.at(index.row()).pntType) return QVariant();
+            QString iconName;
+            if (pointList.at(index.row()).pntType) iconName=":/gui/icons/home.png";
+            else iconName=":/gui/icons/office.png";
+            QIcon icon(iconName);
+            return icon;
+        }
         break;
     default:
         QVariant();
@@ -58,19 +77,19 @@ QVariant PointModel::headerData ( int section, Qt::Orientation orientation, int 
 {
     switch (role) {
     case Qt::DisplayRole:
-        {
-            if (orientation==Qt::Horizontal) {
-                switch (section) {
-                case 0: return tr("N");
-                case 1: return tr("Наименование");
-                case 2: return tr("Описание");
-                case 3: return tr("Координаты");
-                default:
-                    return QVariant();
-                }//switch
-            } else return QVariant();
-            break;
-        }//case Qt::DisplayRole:
+    {
+        if (orientation==Qt::Horizontal) {
+            switch (section) {
+            case 0: return tr("N");
+            case 1: return tr("Наименование");
+            case 2: return tr("Описание");
+            case 3: return tr("Координаты");
+            default:
+                return QVariant();
+            }//switch
+        } else return QVariant();
+        break;
+    }//case Qt::DisplayRole:
     default:
         QVariant();
     }//switch
