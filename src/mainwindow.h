@@ -52,6 +52,7 @@ private:
     int  countCheckedItems();
     void setChanged(bool ch);
     void initIconMenu();
+    QMenu *createPopupMenu(); //заглушка, что бы не показывалось мену у тулбара
 
 protected:
     void closeEvent(QCloseEvent *event);

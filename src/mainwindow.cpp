@@ -415,7 +415,31 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 void MainWindow::setIcon_Type()
 {
     qDebug() << __func__;
-    qDebug() << ((QAction*)this->sender())->data();
+
+    QModelIndex index=ui->treeView->currentIndex();
+    if (!index.isValid()) return;
+
+    int icn_t = ((QAction*)this->sender())->data().toInt();
+    favPoints_t point=pointModel.getPoint(index.row());
+
+    if (icn_t==99) {
+        point.pntType=0;
+    } else
+    if (icn_t==98) {
+        point.pntType=1;
+    } else
+    if (icn_t==97) {
+        point.pntType=2;
+    } else
+    if (icn_t==96) {
+        point.iconNum=0;
+    } else
+    if (icn_t>0 && icn_t<20) {
+        point.iconNum = icn_t;
+    }
+
+    pointModel.setPoint(index.row(),point);
+
 }
 
 void MainWindow::initIconMenu()
@@ -433,7 +457,14 @@ void MainWindow::initIconMenu()
     iconMenu.addSeparator();
     action = iconMenu.addAction(tr("Убрать иконку"),this,SLOT(setIcon_Type()));
     action->setData(96);
-    for (int i=0;i<10;i++) {
-
+    for (int i=0;i<20;i++) {
+        icon = QIcon(":/gui/icons/p_icons/"+QString::number(i+1)+".png");
+        action = iconMenu.addAction(icon,QString::number(i+1),this,SLOT(setIcon_Type()));
+        action->setData(i+1);
     }
+}
+
+QMenu *MainWindow::createPopupMenu ()
+{
+ return 0;
 }

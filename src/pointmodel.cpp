@@ -22,7 +22,6 @@ QVariant PointModel::data(const QModelIndex & index, int role) const
         else if (index.column()==1) return ((favPoints_t)pointList.at(index.row())).name;
         else if (index.column()==2) return ((favPoints_t)pointList.at(index.row())).desc;
         else if (index.column()==3) return QString(tr("N %2, E %1")).arg(QString::number(pointList.at(index.row()).lon,'g',8).leftJustified(8,'0',true)).arg(QString::number(pointList.at(index.row()).lat,'g',8).leftJustified(8,'0',true));
-        else if (index.column()==4) return QString("home/office");
         break;
     case Qt::CheckStateRole:
         if (index.column()==0) return ((favPoints_t)pointList.at(index.row())).checked?Qt::Checked:Qt::Unchecked;
@@ -31,17 +30,18 @@ QVariant PointModel::data(const QModelIndex & index, int role) const
     case Qt::DecorationRole:
         if (index.column()==0)
         {
-            if (!pointList.at(index.row()).iconNum) return QVariant();
-            QString iconName=":/gui/icons/icon"+QString::number(pointList.at(index.row()).iconNum)+".png";
-            QIcon icon(":/gui/icons/help.png");
+            if (pointList.at(index.row()).iconNum==0) return QVariant();
+            QString iconName=":/gui/icons/p_icons/"+QString::number(pointList.at(index.row()).iconNum)+".png";
+            qDebug() << iconName << pointList.at(index.row()).name;
+            QIcon icon(iconName);
             return icon;
         } else
         if (index.column()==1)
         {
             if (!pointList.at(index.row()).pntType) return QVariant();
             QString iconName;
-            if (pointList.at(index.row()).pntType) iconName=":/gui/icons/home.png";
-            else iconName=":/gui/icons/office.png";
+            if (pointList.at(index.row()).pntType==1) iconName=":/gui/icons/bt_home_n.2.png";
+            if (pointList.at(index.row()).pntType==2) iconName=":/gui/icons/bt_office_n.2.png";
             QIcon icon(iconName);
             return icon;
         }
