@@ -34,6 +34,7 @@ public:
     void setPoint(int row, favPoints_t &point); //записываем данные точки
     bool swapRows(int oldRow, int newRow); //меняет записи местами
     bool swapRows(QModelIndex &oldRow, QModelIndex &newRow); //меняет записи местами
+    bool setPointType(int row, uint type);//устанавливает тип точки (дом/офис), если на другой точке у же стоит такой тип, то он очищается
 };
 
 #endif // POINTMODEL_H

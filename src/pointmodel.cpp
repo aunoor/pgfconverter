@@ -32,19 +32,18 @@ QVariant PointModel::data(const QModelIndex & index, int role) const
         {
             if (pointList.at(index.row()).iconNum==0) return QVariant();
             QString iconName=":/gui/icons/p_icons/"+QString::number(pointList.at(index.row()).iconNum)+".png";
-            qDebug() << iconName << pointList.at(index.row()).name;
             QIcon icon(iconName);
             return icon;
         } else
-        if (index.column()==1)
-        {
-            if (!pointList.at(index.row()).pntType) return QVariant();
-            QString iconName;
-            if (pointList.at(index.row()).pntType==1) iconName=":/gui/icons/bt_home_n.2.png";
-            if (pointList.at(index.row()).pntType==2) iconName=":/gui/icons/bt_office_n.2.png";
-            QIcon icon(iconName);
-            return icon;
-        }
+            if (index.column()==1)
+            {
+                if (!pointList.at(index.row()).pntType) return QVariant();
+                QString iconName;
+                if (pointList.at(index.row()).pntType==1) iconName=":/gui/icons/bt_home_n.2.png";
+                if (pointList.at(index.row()).pntType==2) iconName=":/gui/icons/bt_office_n.2.png";
+                QIcon icon(iconName);
+                return icon;
+            }
         break;
     default:
         QVariant();
@@ -309,4 +308,22 @@ bool PointModel::swapRows(QModelIndex &oldRow, QModelIndex &newRow)
     pointList.swap(oldRow.row(), newRow.row());
     emit dataChanged(index(oldRow.row(),0,QModelIndex()),index(newRow.row(),columnCount(QModelIndex())));
     return true;
+}
+
+bool PointModel::setPointType(int row, uint type)
+{
+    if (row<0 || row> pointList.count()-1) return false;
+    if (type!=0) {
+        for (int i=0;i<pointList.count()-1;i++) {
+            if (pointList.at(i).pntType==type) {
+                favPoints_t point =  pointList[i];
+                point.pntType=0;
+                setPoint(i,point);
+            }//if ==
+            }//for
+        }//!=0
+
+    favPoints_t point = pointList.at(row);
+    point.pntType = type;
+    setPoint(row, point);
 }
