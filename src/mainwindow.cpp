@@ -460,11 +460,11 @@ void MainWindow::initIconMenu()
     action = iconMenu.addAction(icon,tr("Офис"),this,SLOT(setIcon_Type()));
     action->setData(97);
     iconMenu.addSeparator();
-    action = iconMenu.addAction(tr("Убрать иконку"),this,SLOT(setIcon_Type()));
-    action->setData(96);
-    for (int i=1;i<21;i++) {
-        icon = QIcon(":/gui/icons/p_icons/"+QString::number(i)+".png");
-        action = iconMenu.addAction(icon,QString::number(i),this,SLOT(setIcon_Type()));
+//    action = iconMenu.addAction(tr("Убрать иконку"),this,SLOT(setIcon_Type()));
+//    action->setData(96);
+    for (int i=0;i<20;i++) {
+        icon = QIcon(":/gui/icons/p_icons/"+QString::number(i+1)+".png");
+        action = iconMenu.addAction(icon,QString::number(i+1),this,SLOT(setIcon_Type()));
         action->setData(i);
     }
 }

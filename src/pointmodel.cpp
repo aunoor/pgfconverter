@@ -30,8 +30,7 @@ QVariant PointModel::data(const QModelIndex & index, int role) const
     case Qt::DecorationRole:
         if (index.column()==0)
         {
-            if (pointList.at(index.row()).iconNum==0) return QVariant();
-            QString iconName=":/gui/icons/p_icons/"+QString::number(pointList.at(index.row()).iconNum)+".png";
+            QString iconName=":/gui/icons/p_icons/"+QString::number(pointList.at(index.row()).iconNum+1)+".png";
             QIcon icon(iconName);
             return icon;
         } else
@@ -322,8 +321,8 @@ bool PointModel::setPointType(int row, uint type)
             }//if ==
             }//for
         }//!=0
-
     favPoints_t point = pointList.at(row);
     point.pntType = type;
     setPoint(row, point);
+    return true;
 }
