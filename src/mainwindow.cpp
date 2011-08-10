@@ -414,8 +414,6 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
 void MainWindow::setIcon_Type()
 {
-    qDebug() << __func__;
-
     QModelIndex index=ui->treeView->currentIndex();
     if (!index.isValid()) return;
 
@@ -442,9 +440,6 @@ void MainWindow::setIcon_Type()
         point.iconNum = icn_t;
         pointModel.setPoint(index.row(),point);
     }
-
-
-
 }
 
 void MainWindow::initIconMenu()

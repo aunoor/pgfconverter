@@ -8,6 +8,8 @@ void pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt)
     rawPnt->lat=pnt.lat*100000;
     rawPnt->lon=pnt.lon*100000;
     QByteArray ba = codec->fromUnicode(QString(pnt.name));
+    rawPnt->pntType = pnt.pntType;
+    rawPnt->iconNum = pnt.iconNum;
 
     //Из-за каких то глюков Qt, либо я что-то не осилил, но приходиться копировать байты руками...
     for (int i=0;i<(ba.size()>0x100?0x100:ba.size()-2);i++) {
