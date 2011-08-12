@@ -20,10 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->ui->treeView->setModel(&this->pointModel);
 
-    this->ui->treeView->header()->resizeSection(0,90);
+    this->ui->treeView->header()->resizeSection(0,110);
     this->ui->treeView->header()->resizeSection(1,200);
     this->ui->treeView->header()->resizeSection(2,200);
-    this->ui->treeView->sortByColumn(0,Qt::AscendingOrder);
     this->ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     initIconMenu();
@@ -278,7 +277,6 @@ void MainWindow::on_action_del_from_list_triggered()
     QModelIndex index=ui->treeView->currentIndex();
     if (!index.isValid()) return;
     pointModel.removeRow(index.row());
-    //setChanged(true);
 }
 
 void MainWindow::on_treeView_customContextMenuRequested(QPoint pos)
@@ -422,14 +420,11 @@ void MainWindow::setIcon_Type()
 
     if (icn_t==99) {
         pointModel.setPointType(index.row(), 0);
-        //point.pntType=0;
     } else
     if (icn_t==98) {
         pointModel.setPointType(index.row(), 1);
-        //point.pntType=1;
     } else
     if (icn_t==97) {
-        //point.pntType=2;
         pointModel.setPointType(index.row(), 2);
     } else
     if (icn_t==96) {
@@ -455,8 +450,6 @@ void MainWindow::initIconMenu()
     action = iconMenu.addAction(icon,tr("Офис"),this,SLOT(setIcon_Type()));
     action->setData(97);
     iconMenu.addSeparator();
-//    action = iconMenu.addAction(tr("Убрать иконку"),this,SLOT(setIcon_Type()));
-//    action->setData(96);
     for (int i=0;i<20;i++) {
         icon = QIcon(":/gui/icons/p_icons/"+QString::number(i+1)+".png");
         action = iconMenu.addAction(icon,QString::number(i+1),this,SLOT(setIcon_Type()));
