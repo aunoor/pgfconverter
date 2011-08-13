@@ -3,7 +3,7 @@
 
 #include <QtCore>
 
-#define VERSION "v1.0.7"
+#define VERSION "v1.0.8"
 
 #define MIME_RAW_POINT_TYPE "application/x-rawpointlist"
 
@@ -19,7 +19,7 @@ typedef struct FavRecord {
     char desc[0x100];//256 байтов
 }favRecord_t;  //0x414 - длина записи.
 
-enum PointType {ptHome=1, ptOffice=2};
+enum PointType {ptNone=0, ptHome=1, ptOffice=2};
 
 typedef struct FavPoints{
    QString name;

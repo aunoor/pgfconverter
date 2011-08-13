@@ -419,13 +419,13 @@ void MainWindow::setIcon_Type()
     favPoints_t point=pointModel.getPoint(index.row());
 
     if (icn_t==99) {
-        pointModel.setPointType(index.row(), 0);
+        pointModel.setPointType(index.row(), ptNone);
     } else
     if (icn_t==98) {
-        pointModel.setPointType(index.row(), 1);
+        pointModel.setPointType(index.row(), ptHome);
     } else
     if (icn_t==97) {
-        pointModel.setPointType(index.row(), 2);
+        pointModel.setPointType(index.row(), ptOffice);
     } else
     if (icn_t==96) {
         point.iconNum=0;

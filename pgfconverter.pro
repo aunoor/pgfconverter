@@ -5,7 +5,7 @@ QT += core \
     gui \
     xml
 TARGET = pgfconverter
-CONFIG += console
+CONFIG -= console
 CONFIG -= app_bundle
 TEMPLATE = app
 SOURCES += src/main.cpp \
