@@ -12,6 +12,17 @@
  Но т.к. погрешность GPS до 10 метров, несколько секунд большой разницы не играют.
 */
 
+class IconMenuStyle : public QProxyStyle
+ {
+   public:
+    int pixelMetric(PixelMetric metric, const QStyleOption * option = 0, const QWidget * widget = 0 ) const
+    {
+        if (metric==QStyle::PM_SmallIconSize) return 24;
+        return QProxyStyle::pixelMetric(metric, option, widget);
+    }
+ };
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -38,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent) :
     changed=false;
 
     ui->treeView->installEventFilter(this);
+
+    iconMenu.setStyle(new IconMenuStyle);
 
     connect(&pointModel,SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),SLOT(pointModel_dataChanged_slot(const QModelIndex &, const QModelIndex &)));
 }
