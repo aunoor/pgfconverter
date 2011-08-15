@@ -444,7 +444,7 @@ void MainWindow::setIcon_Type()
         point.iconNum=0;
         pointModel.setPoint(index.row(),point);
     } else
-    if (icn_t>0 && icn_t<21) {
+    if (icn_t>-1 && icn_t<21) {
         point.iconNum = icn_t;
         pointModel.setPoint(index.row(),point);
     }
