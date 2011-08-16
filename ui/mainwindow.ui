@@ -51,6 +51,12 @@
    <property name="allowedAreas">
     <set>Qt::NoToolBarArea</set>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
    <property name="floatable">
     <bool>false</bool>
    </property>
@@ -62,10 +68,16 @@
    </attribute>
    <addaction name="action_open_file"/>
    <addaction name="action_append_from_file"/>
+   <addaction name="action_save"/>
+   <addaction name="action_save_as"/>
    <addaction name="action_save_gpx"/>
    <addaction name="action_export_fav"/>
+   <addaction name="action_about_prog"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>0</x>

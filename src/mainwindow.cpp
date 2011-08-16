@@ -51,6 +51,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeView->installEventFilter(this);
 
     iconMenu.setStyle(new IconMenuStyle);
+    listMenu.setStyle(new IconMenuStyle);
+
+    ui->menuBar->setVisible(false);
+
+
+    QWidgetAction *wact = new QWidgetAction(ui->toolBar);
+    QScrollArea *widget = new QScrollArea(ui->toolBar);
+    widget->setFrameStyle(QFrame::NoFrame);
+    widget->setMaximumHeight(ui->toolBar->height());
+    wact->setDefaultWidget(widget);
+    ui->toolBar->insertAction(ui->action_about_prog,wact);
+
 
     connect(&pointModel,SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),SLOT(pointModel_dataChanged_slot(const QModelIndex &, const QModelIndex &)));
 }
