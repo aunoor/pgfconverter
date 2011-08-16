@@ -12,6 +12,10 @@ int main(int argc, char *argv[])
 
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
 
+    QTranslator translator;
+    translator.load(":/translation/qt_ru.qm");
+    a.installTranslator(&translator);
+
     MainWindow w;
     w.show();
 

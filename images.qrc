@@ -35,4 +35,7 @@
         <file>icons/p_icons/19.png</file>
         <file>icons/p_icons/20.png</file>
     </qresource>
+    <qresource prefix="/" >
+        <file>translation/qt_ru.qm</file>
+    </qresource>
 </RCC>
