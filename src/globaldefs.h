@@ -3,10 +3,11 @@
 
 #include <QtCore>
 
-#define VERSION "v1.0.9"
+#define VERSION "v1.0.10"
 
 #define MIME_RAW_POINT_TYPE "application/x-rawpointlist"
 
+#pragma pack(push,1)
 typedef struct FavRecord {
     quint32 pntType;//home-office, 4 байта
     char head[4];
@@ -18,6 +19,7 @@ typedef struct FavRecord {
     quint32 iconNum; //4 байта - номер иконки
     char desc[0x100];//256 байтов
 }favRecord_t;  //0x414 - длина записи.
+#pragma pack(pop)
 
 enum PointType {ptNone=0, ptHome=1, ptOffice=2};
 

@@ -35,6 +35,8 @@ private slots:
     void pointModel_dataChanged_slot(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void setIcon_Type();
 
+    void on_new_point_action_triggered();
+
 private:
     Ui::MainWindow *ui;
     QMenu listMenu;

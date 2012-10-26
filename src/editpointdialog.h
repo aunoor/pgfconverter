@@ -2,6 +2,7 @@
 #define EDITPOINTDIALOG_H
 
 #include <QtGui/QDialog>
+#include "globaldefs.h"
 
 namespace Ui {
     class EditPointDialog;
@@ -20,7 +21,7 @@ private:
     Ui::EditPointDialog *m_ui;
 
 public slots:
-        int exec(QString &name, QString &desc, QString coords);
+        int exec(favPoints_t &point);
 
 };
 

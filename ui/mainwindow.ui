@@ -66,6 +66,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="new_point_action"/>
    <addaction name="action_open_file"/>
    <addaction name="action_append_from_file"/>
    <addaction name="action_save"/>
@@ -83,9 +84,16 @@
      <x>0</x>
      <y>0</y>
      <width>712</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="action_about_prog"/>
+    <addaction name="action_about_Qt"/>
+   </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Файл</string>
@@ -95,13 +103,7 @@
     <addaction name="action_save"/>
     <addaction name="action_save_as"/>
     <addaction name="action_exit"/>
-   </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>Справка</string>
-    </property>
-    <addaction name="action_about_prog"/>
-    <addaction name="action_about_Qt"/>
+    <addaction name="new_point_action"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -247,6 +249,15 @@
    </property>
    <property name="toolTip">
     <string>Установить иконку точки</string>
+   </property>
+  </action>
+  <action name="new_point_action">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/gui/icons/new_file.png</normaloff>:/gui/icons/new_file.png</iconset>
+   </property>
+   <property name="text">
+    <string>Создать новую точку</string>
    </property>
   </action>
  </widget>

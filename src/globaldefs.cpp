@@ -2,7 +2,7 @@
 
 void pntToRawPnt(favPoints_t &pnt, favRecord_t *rawPnt)
 {
-    qMemSet((void*)rawPnt->head,0,sizeof(favRecord_t));
+    qMemSet((void*)rawPnt,0,sizeof(favRecord_t));
     rawPnt->pntType=0L;
     QTextCodec *codec = QTextCodec::codecForName("UTF-16");
     rawPnt->lat=pnt.lat*100000;

@@ -1,6 +1,7 @@
 #include "editpointdialog.h"
 #include "ui_editpointdialog.h"
 
+
 EditPointDialog::EditPointDialog(QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::EditPointDialog)
@@ -26,15 +27,18 @@ void EditPointDialog::changeEvent(QEvent *e)
     }
 }
 
-int EditPointDialog::exec(QString &name, QString &desc, QString coords)
+int EditPointDialog::exec(favPoints_t &point)
 {
-    this->m_ui->nameLineEdit->setText(name);
-    this->m_ui->descLineEdit->setText(desc);
-    this->m_ui->coordsLabel->setText(coords);
+    this->m_ui->nameLineEdit->setText(point.name);
+    this->m_ui->descLineEdit->setText(point.desc);
+    this->m_ui->latSpinBox->setValue(point.lat);
+    this->m_ui->lonSpinBox->setValue(point.lon);
 
     int res=QDialog::exec();
     if (res!=QDialog::Accepted) return res;
-    name = this->m_ui->nameLineEdit->text();
-    desc = this->m_ui->descLineEdit->text();
+    point.name = this->m_ui->nameLineEdit->text();
+    point.desc = this->m_ui->descLineEdit->text();
+    point.lat = this->m_ui->latSpinBox->value();
+    point.lon = this->m_ui->lonSpinBox->value();
     return res;
 }

@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/gui" >
+    <qresource prefix="/gui">
         <file>icons/open.png</file>
         <file>icons/open_add.png</file>
         <file>icons/save.png</file>
@@ -34,8 +34,9 @@
         <file>icons/p_icons/18.png</file>
         <file>icons/p_icons/19.png</file>
         <file>icons/p_icons/20.png</file>
+        <file>icons/new_file.png</file>
     </qresource>
-    <qresource prefix="/" >
+    <qresource prefix="/">
         <file>translation/qt_ru.qm</file>
     </qresource>
 </RCC>

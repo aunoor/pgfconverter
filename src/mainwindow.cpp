@@ -254,15 +254,16 @@ bool MainWindow::storeInFavDat(QString &fileName){
     file.write(&a[0],2);
     file.write((char*)&cnt,4);
     file.seek(6);
+    //favRecord_t *rawPnt = (favRecord_t *)malloc(sizeof(favRecord_t));
+    favRecord_t rawPnt;
     //пишем данные
     for (int i=0; i<pointModel.getPointsCount();i++) {
         if (!pointModel.getPoint(i).checked) continue;
         favPoints_t point = pointModel.getPoint(i);
-        favRecord_t *rawPnt = (favRecord_t *)malloc(sizeof(favRecord_t));
-        pntToRawPnt(point, rawPnt);
-        file.write((const char*)rawPnt, sizeof(favRecord_t));
-        free(rawPnt);
+        pntToRawPnt(point, &rawPnt);
+        file.write((const char*)&rawPnt, sizeof(favRecord_t));
     }//for
+    //free(rawPnt);
     file.close();
     return true;
 
@@ -389,19 +390,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_treeView_doubleClicked(QModelIndex index)
 {
-
     EditPointDialog ed;
-    QString name, desc, coords;
     favPoints_t point=pointModel.getPoint(index.row());
-    name = point.name;
-    desc = point.desc;
-    coords = index.model()->data(pointModel.index(index.row(),3,QModelIndex()),Qt::DisplayRole).toString();
-    int res=ed.exec(name, desc, coords);
+    int res=ed.exec(point);
     if (res==QDialog::Rejected) return;
-
-    point.desc = desc;
-    point.name = name;
-
     pointModel.setPoint(index.row(),point);
 }
 
@@ -483,4 +475,13 @@ void MainWindow::initIconMenu()
 QMenu *MainWindow::createPopupMenu ()
 {
  return 0;
+}
+
+void MainWindow::on_new_point_action_triggered()
+{
+    EditPointDialog ed;
+    favPoints_t point;
+    int res=ed.exec(point);
+    if (res==QDialog::Rejected) return;
+    pointModel.appendPoint(point);
 }
