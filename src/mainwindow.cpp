@@ -481,6 +481,8 @@ void MainWindow::on_new_point_action_triggered()
 {
     EditPointDialog ed;
     favPoints_t point;
+    point.iconNum=0;
+    point.checked=1;
     int res=ed.exec(point);
     if (res==QDialog::Rejected) return;
     pointModel.appendPoint(point);
